@@ -3,29 +3,41 @@ const cardArea = document.getElementById("card-area")
 
 const baseUrl = 'https://www.deckofcardsapi.com/api/deck/'
 
+let index = 0
+let deckOfCards = []
 
-let deckId = ''
-
-function shuffleDeck() {
-  const action = 'new/shuffle/?deck_count=1'
-  axios.get(baseUrl + action).then(resp => {
-    deckId = resp.data.deck_id
-  });
-  cardArea.src = ''
-  cardArea.alt = ''
-  cardInfo.innerText = "Cards remaining 52"
-}
-shuffleDeck()
+axios.get(baseUrl + 'new/draw/?count=52').then(resp => {
+  deckOfCards = resp.data.cards
+})
 
 function nextCard() {
-  const action = deckId + '/draw/?count=1'
-  axios.get(baseUrl + action).then(resp => {
-    showCardImage(resp.data)
-  });
+  showCardImage(deckOfCards[index++])
+}
+
+function resetDeck() {
+  index = 0
+  showIndex()
+  resetCard()
+}
+
+function shuffleDeck() {
+  index = 0
+  deckOfCards.sort(function(a, b){return 0.5 - Math.random()});
+  showIndex()
+  resetCard()
 }
 
 function showCardImage(card) {
-  cardInfo.innerText = "Cards remaining: " + card.remaining
-  cardArea.src = card.cards[0].image
-  cardArea.alt = card.cards[0].code
+  showIndex()
+  cardArea.src = index === 0 ? '' : card.image
+  cardArea.alt = index === 0 ? '' : card.code
+}
+
+function showIndex() {
+  cardInfo.innerText = 'Card ' + index +' of 52'
+}
+
+function resetCard() {
+  cardArea.src = ''
+  cardArea.alt = ''
 }
