@@ -1,0 +1,8 @@
+#button-area {
+  display: flex;
+}
+
+#card-area {
+  width: 226px;
+  height: 314px;
+}
